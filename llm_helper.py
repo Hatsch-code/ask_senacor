@@ -1,43 +1,37 @@
-import os
 import re
-import streamlit as st
-from dotenv import load_dotenv
 from langchain.chains import RetrievalQA, ConversationalRetrievalChain
 from langchain.chains.qa_with_sources import load_qa_with_sources_chain
 from langchain.chains.llm import LLMChain
 from langchain.chains.chat_vector_db.prompts import CONDENSE_QUESTION_PROMPT
 from langchain.prompts import PromptTemplate
-# from langchain.chat_models import ChatOpenAI
 from langchain.chat_models import AzureChatOpenAI
 
-from langchain.document_loaders import WebBaseLoader, ConfluenceLoader
-# from langchain.embeddings import OpenAIEmbeddings
 from langchain.embeddings import AzureOpenAIEmbeddings
 
-from langchain.prompts.chat import (ChatPromptTemplate,
-                                    HumanMessagePromptTemplate,
-                                    SystemMessagePromptTemplate)
-from langchain.text_splitter import CharacterTextSplitter, RecursiveCharacterTextSplitter
-from langchain.vectorstores import Chroma
-
-from streamlit_chat import message
-
-import requests
-from bs4 import BeautifulSoup
-
-from vector_storage import add_website_to_vector_store, add_confluence_to_vector_store, init_vector_store
+from vector_storage import init_vector_store
 from customprompt import PROMPT
 
 
 class LLMHelper:
+    # LLMHelper is a class that helps to use the LLM model to answer questions and extract followup questions
+    # from the answer. It also helps to get the context of the answer from the source documents.
+    # The class is initialized with a custom prompt that can be used to customize the answer.
+    # The class can be used in two ways:
+    # 1. To answer a question and extract followup questions from the answer
+    # 2. To answer a question and get the context of the answer from the source documents
+
     def __init__(self, custom_prompt="", temperature=0.7):
+        # Initialize the LLM model
+        # TODO: Change to use open source LLM model
         self.llm = AzureChatOpenAI(
             azure_deployment="AskSenacor-gpt35turbo-v1",
             openai_api_version="2023-05-15",
             temperature=temperature,
         )
+        # Initialize the prompt - this can be customized
         self.prompt = PROMPT if custom_prompt == '' else PromptTemplate(template=custom_prompt,
                                                                         input_variables=["summaries", "question"])
+        # Initialize the vector store, which is used to store and retrieve the source documents
         self.vector_store = init_vector_store(
             embeddings=AzureOpenAIEmbeddings(
                 azure_deployment="AskSenacor-ada002-v1",
@@ -46,6 +40,7 @@ class LLMHelper:
             index_name="langchain-vector-demo")
 
     def extract_followupquestions(self, answer):
+        # Extract followup questions from the answer, this is an optional feature
         followupTag = answer.find('Follow-up Questions')
         followupQuestions = answer.find('<<')
 
@@ -93,8 +88,10 @@ class LLMHelper:
         return answer_without_followupquestions, followup_questions_list
 
     def get_semantic_answer_lang_chain(self, question, chat_history):
+        # Get the answer from the LLM model including the sources, and takes chat history into account
         question_generator = LLMChain(llm=self.llm, prompt=CONDENSE_QUESTION_PROMPT, verbose=False)
         doc_chain = load_qa_with_sources_chain(self.llm, chain_type="stuff", verbose=False, prompt=self.prompt)
+        # TODO: Add a more sophisticated retrieval chain
         chain = ConversationalRetrievalChain(
             retriever=self.vector_store.as_retriever(),
             question_generator=question_generator,
@@ -129,7 +126,7 @@ class LLMHelper:
         return qa(question)
 
     def insert_citations_in_answer(self, answer, filenameList):
-
+        # Insert citations in the answer to indicate the source of the answer
         filenameList_lowered = [x.lower() for x in filenameList]    # LLM can make case mitakes in returing the filename of the source
 
         matched_sources = []
@@ -155,26 +152,17 @@ class LLMHelper:
         return answer, matched_sources, filenameList_lowered
 
     def get_links_filenames(self, answer, sources):
-        split_sources = sources.split('  \n ') # soures are expected to be of format '  \n  [filename1.ext](sourcelink1)  \n [filename2.ext](sourcelink2)  \n  [filename3.ext](sourcelink3)  \n '
+        # Get the links and filenames of the source documents
+        split_sources = sources.split('  \n ')
         srcList = []
-        linkList = []
-        filenameList = []
         for src in split_sources:
             if src != '':
                 srcList.append(src)
-                #link = src[1:].split('(')[1][:-1].split(')')[0] # get the link
-                #linkList.append(link)
-                #filename = src[1:].split(']')[0] # retrieve the source filename.
-                #source_url = link.split('?')[0]
-                #answer = answer.replace(source_url, filename)  # if LLM added a path to the filename, remove it from the answer
-                #filenameList.append(filename)
-
-        # answer, matchedSourcesList, filenameList = self.insert_citations_in_answer(answer, filenameList) # Add (1), (2), (3) to the answer to indicate the source of the answer
-
-        return answer, srcList #, matchedSourcesList, linkList, filenameList
+        return answer, srcList
 
     @staticmethod
     def clean_encoding(text):
+        # Clean the encoding of the text
         try:
             encoding = 'ISO-8859-1'
             encodedtext = text.encode(encoding)

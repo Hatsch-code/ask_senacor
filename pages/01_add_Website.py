@@ -12,16 +12,19 @@ CONFLUENCE_URL = os.getenv("CONFLUENCE_URL", None)
 
 
 def setup_ui():
-    # Set the title and subtitle of the app
+    # Set the title of the app
     st.title('🦜🔗 Add Website')
 
 
 try:
+    setup_ui()
     url = st.text_input("Insert The website URL")
     if st.button("Add Website", type="secondary"):
+        # Add the website and crawl over all subpages to the vector store
         add_website_to_vector_store(url)
 
     if CONFLUENCE_URL and st.button("Add Confluence", type="secondary"):
+        # Add defined confluence pages to the vector store
         add_confluence_to_vector_store()
 
 except Exception:

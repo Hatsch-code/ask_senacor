@@ -9,6 +9,7 @@ from random import randint
 
 
 def clear_chat_data():
+    # Clear chat history, and all other chat data
     st.session_state['chat_history'] = []
     st.session_state['chat_source_documents'] = []
     st.session_state['chat_askedquestion'] = ''
@@ -18,6 +19,7 @@ def clear_chat_data():
 
 
 def questionAsked():
+    # Callback to assign the question asked by the user
     st.session_state.chat_askedquestion = st.session_state["input" + str(st.session_state['input_message_key'])]
     st.session_state["input" + str(st.session_state['input_message_key'])] = ""
     st.session_state.chat_question = st.session_state.chat_askedquestion
@@ -50,16 +52,10 @@ try:
     user_avatar_style = os.getenv("CHAT_USER_AVATAR_STYLE", "thumbs")
     user_seed = os.getenv("CHAT_USER_SEED", "Bubba")
 
-    menu_items = {
-        'Get help': None,
-        'Report a bug': None,
-        'About': '''
-         ## Embeddings App
-         Embedding testing application.
-        '''
-    }
-    st.set_page_config(layout="wide", menu_items=menu_items)
+    # Set page config
+    st.set_page_config(layout="wide")
 
+    # Initialize LLMHelper
     llm_helper = LLMHelper()
 
     # Chat 
@@ -85,6 +81,7 @@ try:
 
             # This history entry is the latest one - also show follow-up questions, buttons to access source(s) context(s) 
             if i == history_range.start:
+
                 answer_with_citations, sourceList = llm_helper.get_links_filenames(
                     st.session_state['chat_history'][i][1], st.session_state['chat_source_documents'][i])
                 st.session_state['chat_history'][i] = st.session_state['chat_history'][i][:1] + (answer_with_citations,)
