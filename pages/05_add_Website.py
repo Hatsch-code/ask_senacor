@@ -12,8 +12,11 @@ CONFLUENCE_URL = os.getenv("CONFLUENCE_URL", None)
 
 
 def setup_ui():
+    # Set page config
+    st.set_page_config(layout="wide")
     # Set the title of the app
     st.title('🦜🔗 Add Website')
+    st.subheader('Add a website and all of its subpages to the vector store - use with caution!')
 
 
 try:

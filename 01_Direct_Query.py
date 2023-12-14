@@ -37,7 +37,16 @@ def questionAsked():
     st.session_state.askedquestion = st.session_state["input" + str(st.session_state['input_message_key'])]
 
 
+def setup_ui():
+    # Set page config
+    st.set_page_config(layout="wide")
+    # Set the title of the app
+    st.title('Ask Senacor - Direct Query')
+    st.subheader('Test Settings, Queries, Prompts and generel LLM-Functionality')
+
+
 try:
+    setup_ui()
     default_prompt = ""
     default_question = ""
     default_answer = ""
@@ -62,16 +71,6 @@ try:
     if 'askedquestion' not in st.session_state:
         st.session_state.askedquestion = default_question
 
-    # Set page layout to wide screen and menu item
-    menu_items = {
-        'Get help': None,
-        'Report a bug': None,
-        'About': '''
-         ## Embeddings App
-         Embedding testing application.
-        '''
-    }
-    st.set_page_config(layout="wide", menu_items=menu_items)
 
     llm_helper = LLMHelper(custom_prompt=st.session_state.custom_prompt,
                            temperature=st.session_state.custom_temperature)

@@ -31,7 +31,16 @@ def ask_followup_question(followup_question):
     st.session_state['input_message_key'] = st.session_state['input_message_key'] + 1
 
 
+def setup_ui():
+    # Set page config
+    st.set_page_config(layout="wide")
+    # Set the title of the app
+    st.title('Ask Senacor')
+    st.subheader('Ask Senacor your questions about the company, our projects, our people, and more!')
+
+
 try:
+    setup_ui()
     # Initialize chat history
     if 'chat_question' not in st.session_state:
         st.session_state['chat_question'] = ''
@@ -51,9 +60,6 @@ try:
     ai_seed = os.getenv("CHAT_AI_SEED", "Lucy")
     user_avatar_style = os.getenv("CHAT_USER_AVATAR_STYLE", "thumbs")
     user_seed = os.getenv("CHAT_USER_SEED", "Bubba")
-
-    # Set page config
-    st.set_page_config(layout="wide")
 
     # Initialize LLMHelper
     llm_helper = LLMHelper()
