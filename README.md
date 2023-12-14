@@ -1,8 +1,9 @@
-# chat-with-website
-Simple Streamlit app to have interaction with your website URL.
+# ask_senacor
+simple streamlit app interaction with content from website and confluence webpages.
 
 ### Chat with your documents 🚀
-- [OpenAI model](https://platform.openai.com/docs/models) as Large Language model
+- [Azure OpenAI model](https://azure.microsoft.com/de-de/products/ai-services/openai-service) as Large Language model
+- [Azure AI Search](https://azure.microsoft.com/de-de/products/ai-services/ai-search) as Vector Storage
 - [LangChain](https://python.langchain.com/en/latest/modules/models/llms/integrations/huggingface_hub.html) as a Framework for LLM
 - [Streamlit](https://streamlit.io/) for deploying.
 
@@ -14,15 +15,22 @@ You must have Python 3.9 or later installed. Earlier versions of python may not 
 
 ## Steps to Replicate 
 
-1. Fork this repository and create a codespace in GitHub as I showed you in the youtube video OR Clone it locally.
+1. Fork this repository
 ```
-git clone https://github.com/sudarshan-koirala/chat-with-website.git
-cd chat-with-website
+git clone https://github.com/Hatsch-code/ask_senacor.git
 ```
 
-2. Rename example.env to .env with `cp example.env .env`and input the OpenAI API key as follows. Get OpenAI API key from this [URL](https://platform.openai.com/account/api-keys). You need to create an account in OpenAI webiste if you haven't already.
+2. Rename example.env to .env and adapt the variables with your personal ones
    ```
-   OPENAI_API_KEY=your_openai_api_key
+    CONFLUENCE_URL=https://***
+	CONFLUENCE_USERNAME=YOUR CONFLUENCE USERNAME
+	CONFLUENCE_TOKEN=YOUR CONFLUENCE TOKEN
+
+	YOUR_AZURE_SEARCH_ENDPOINT=YOUR AZURE SEARCH ENDPOINT
+	YOUR_AZURE_SEARCH_ADMIN_KEY=YOUR AZURE SEARCH ADMIN KEY
+
+	AZURE_OPENAI_API_KEY=YOUR OPENAI API KEY
+	AZURE_OPENAI_ENDPOINT=YOUR OPENAI ENDPOINT
    ```
    
 3. Create a virtualenv and activate it
@@ -37,5 +45,5 @@ cd chat-with-website
 
 5. Run the following command in your terminal to start the chat UI:
    ```
-   streamlit run chat_with_website.py
+   streamlit run 01_Direct_Query.py
    ```
