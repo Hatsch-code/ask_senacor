@@ -6,6 +6,31 @@ from llm_helper import LLMHelper
 
 
 def check_deployment():
+    # Check if the deployment is working
+    #\ 1. Check if the llm is working
+    try:
+        llm_helper = LLMHelper()
+        llm_helper.standard_query("Generate a joke!")
+        st.success("LLM is working!")
+    except Exception as e:
+        st.error(f"""LLM is not working.""")
+        st.error(traceback.format_exc())
+    #\ 2. Check if the embedding is working
+    try:
+        llm_helper = LLMHelper()
+        llm_helper.embeddings.embed_documents(texts=["This is a test"])
+        st.success("Embedding is working!")
+    except Exception as e:
+        st.error(f"""Embedding model is not working.""")
+        st.error(traceback.format_exc())
+    #\ 3. Check if vector store is connected
+    try:
+        llm_helper = LLMHelper()
+        llm_helper.print_semantic_similarity("This is a test About Senacor")
+        st.success("Semantic Similarity Search is working!")
+    except Exception as e:
+        st.error(f""" Vector Store is not working.""")
+        st.error(traceback.format_exc())
     pass
 
 

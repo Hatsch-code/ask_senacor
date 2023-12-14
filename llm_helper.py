@@ -31,12 +31,14 @@ class LLMHelper:
         # Initialize the prompt - this can be customized
         self.prompt = PROMPT if custom_prompt == '' else PromptTemplate(template=custom_prompt,
                                                                         input_variables=["summaries", "question"])
-        # Initialize the vector store, which is used to store and retrieve the source documents
-        self.vector_store = init_vector_store(
-            embeddings=AzureOpenAIEmbeddings(
+
+        self.embeddings = AzureOpenAIEmbeddings(
                 azure_deployment="AskSenacor-ada002-v1",
                 openai_api_version="2023-05-15",
-            ),
+            )
+        # Initialize the vector store, which is used to store and retrieve the source documents
+        self.vector_store = init_vector_store(
+            embeddings=self.embeddings,
             index_name="langchain-vector-demo")
 
     def extract_followupquestions(self, answer):
@@ -159,6 +161,16 @@ class LLMHelper:
             if src != '':
                 srcList.append(src)
         return answer, srcList
+
+    def print_semantic_similarity(self, question, k=3, search_type="similarity"):
+        # Can be used to test the semantic search function of the vector store
+        docs = self.vector_store.similarity_search(
+            query=question,
+            k=k,
+            search_type=search_type,
+        )
+        print(docs[0].page_content)
+
 
     @staticmethod
     def clean_encoding(text):
