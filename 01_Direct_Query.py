@@ -89,8 +89,8 @@ try:
 
     if 'sources' not in st.session_state:
         st.session_state['sources'] = ""
-    if 'followup_questions' not in st.session_state:
-        st.session_state['followup_questions'] = []
+    # if 'followup_questions' not in st.session_state:
+    #     st.session_state['followup_questions'] = []
     if 'input_message_key' not in st.session_state:
         st.session_state['input_message_key'] = 1
     if 'askedquestion' not in st.session_state:
@@ -124,7 +124,7 @@ try:
             st.text_area("Custom Prompt", key='custom_prompt', on_change=check_variables_in_prompt,
                          placeholder=custom_prompt_placeholder, help=custom_prompt_help, height=150)
 
-    question = st.text_input("Azure OpenAI Semantic Answer", value=st.session_state['askedquestion'],
+    question = st.text_input("Question", value=st.session_state['askedquestion'],
                              key="input" + str(st.session_state['input_message_key']), on_change=questionAsked)
 
     # Answer the question if any
@@ -136,9 +136,9 @@ try:
             st.session_state['context'], \
             st.session_state['sources'] = llm_helper.get_semantic_answer_lang_chain(st.session_state['question'],
                                                                                     [])
-        st.session_state['response'], followup_questions_list = llm_helper.extract_followupquestions(
-            st.session_state['response'])
-        st.session_state['followup_questions'] = followup_questions_list
+        # st.session_state['response'], followup_questions_list = llm_helper.extract_followupquestions(
+        #     st.session_state['response'])
+        # st.session_state['followup_questions'] = followup_questions_list
 
     sourceList = []
 
@@ -152,15 +152,15 @@ try:
         st.markdown("Answer: " + st.session_state['response'])
 
     # Display proposed follow-up questions which can be clicked on to ask that question automatically
-    if len(st.session_state['followup_questions']) > 0:
-        st.write("<br>", unsafe_allow_html=True)
-        st.markdown('**Proposed follow-up questions:**')
-    with st.container():
-        for questionId, followup_question in enumerate(st.session_state['followup_questions']):
-            if followup_question:
-                str_followup_question = re.sub(r"(^|[^\\\\])'", r"\1\\'", followup_question)
-                st.button(str_followup_question, key=1000 + questionId, on_click=ask_followup_question,
-                          args=(followup_question,))
+    # if len(st.session_state['followup_questions']) > 0:
+    #     st.write("<br>", unsafe_allow_html=True)
+    #     st.markdown('**Proposed follow-up questions:**')
+    # with st.container():
+    #     for questionId, followup_question in enumerate(st.session_state['followup_questions']):
+    #         if followup_question:
+    #             str_followup_question = re.sub(r"(^|[^\\\\])'", r"\1\\'", followup_question)
+    #             st.button(str_followup_question, key=1000 + questionId, on_click=ask_followup_question,
+    #                       args=(followup_question,))
 
     if st.session_state['sources'] or st.session_state['context']:
         # Buttons to display the context used to answer
@@ -180,9 +180,9 @@ try:
 
             st.markdown(f"SOURCES: {st.session_state['sources']}")
 
-    for questionId, followup_question in enumerate(st.session_state['followup_questions']):
-        if followup_question:
-            str_followup_question = re.sub(r"(^|[^\\\\])'", r"\1\\'", followup_question)
+    # for questionId, followup_question in enumerate(st.session_state['followup_questions']):
+    #     if followup_question:
+    #         str_followup_question = re.sub(r"(^|[^\\\\])'", r"\1\\'", followup_question)
 
 except Exception:
     st.error(traceback.format_exc())

@@ -160,7 +160,7 @@ class LLMHelper:
         for src in split_sources:
             if src != '':
                 srcList.append(src)
-        return answer, srcList
+        return re.sub("([\(\[]).*?([\)\]])", "", answer).replace(']', '').replace('[', ''), srcList
 
     def print_semantic_similarity(self, question, k=3, search_type="similarity"):
         # Can be used to test the semantic search function of the vector store
