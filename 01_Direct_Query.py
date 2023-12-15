@@ -178,8 +178,6 @@ try:
                     for context_text in st.session_state['context'][content_source]:
                         st.markdown(f"{context_text}")
 
-            st.markdown(f"SOURCES: {st.session_state['sources']}")
-
     # for questionId, followup_question in enumerate(st.session_state['followup_questions']):
     #     if followup_question:
     #         str_followup_question = re.sub(r"(^|[^\\\\])'", r"\1\\'", followup_question)
