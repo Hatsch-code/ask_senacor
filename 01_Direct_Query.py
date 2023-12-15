@@ -175,8 +175,8 @@ try:
             if not st.session_state['context'] is None and st.session_state['context'] != []:
                 for content_source in st.session_state['context'].keys():
                     st.markdown(f"#### {content_source}")
-                    for context_text in st.session_state['context'][content_source]:
-                        st.markdown(f"{context_text}")
+                    for i, context_text in enumerate(st.session_state['context'][content_source]):
+                        st.markdown(f"Chunk {i+1}: {context_text}")
 
     # for questionId, followup_question in enumerate(st.session_state['followup_questions']):
     #     if followup_question:
